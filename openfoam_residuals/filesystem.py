@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from openfoam_residuals import plot as orp
+from openfoam_residuals import utils
 
 
 def find_residual_files(w_dir: Path) -> list[Path]:
@@ -21,12 +21,12 @@ def find_min_and_max_iteration(residual_files: list[Path]) -> tuple[int, int]:
     max_iter = 0
     for file in residual_files:
         data, _ = pre_parse(file)
-        min_i = 10 ** orp.order_of_magnitude(data.min().min())
+        min_i = 10 ** utils.order_of_magnitude(data.min().min())
         if 0 < min_i < min_val:
             min_val = min_i
         max_iter_i = data.index.max()
         if max_iter_i > max_iter:
-            max_iter = orp.roundup(max_iter_i)
+            max_iter = utils.roundup(max_iter_i)
     return min_val, max_iter
 
 

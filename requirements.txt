@@ -1,4 +1,0 @@
-tqdm
-pathlib
-matplotlib
-pandas
