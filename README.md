@@ -12,22 +12,31 @@ A Python tool to parse and plot residual data from OpenFOAM case directories. Th
 -   **Data Export**: Exports cleaned data for further analysis.
 -   **Smart Scaling**: Automatically adjusts plot scales based on residual magnitude.
 
+## Requirements
+
+- Python **3.10** or later
+
 ## Installation
 
-This project uses `uv` for dependency management.
+Install from PyPI:
+```bash
+pip install openfoam-residuals
+```
 
-1.  **Install `uv`** (if not already installed):
-    ```bash
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-    ```
+or with [uv](https://docs.astral.sh/uv/):
+```bash
+uv add openfoam-residuals
+```
 
-2.  **Clone the repository**:
+### Development Setup
+
+1.  **Clone the repository**:
     ```bash
     git clone https://github.com/Eddy3D-Dev/OpenFOAM-Residuals.git
     cd OpenFOAM-Residuals
     ```
 
-3.  **Install dependencies**:
+2.  **Install dependencies**:
     ```bash
     uv sync
     ```
