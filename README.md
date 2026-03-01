@@ -1,4 +1,4 @@
-[![CI](https://github.com/Eddy3D-Dev/OpenFOAM-Residuals/actions/workflows/main.yml/badge.svg)](https://github.com/Eddy3D-Dev/OpenFOAM-Residuals/actions/workflows/main.yml) ![GitHub Tag](https://img.shields.io/github/v/tag/Eddy3D-Dev/OpenFOAM-Residuals)
+[![CI](https://github.com/Eddy3D-Dev/OpenFOAM-Residuals/actions/workflows/main.yml/badge.svg)](https://github.com/Eddy3D-Dev/OpenFOAM-Residuals/actions/workflows/main.yml) [![PyPI](https://img.shields.io/pypi/v/openfoam-residuals)](https://pypi.org/project/openfoam-residuals/)
 
 # OpenFOAM-Residuals
 
