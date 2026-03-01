@@ -12,16 +12,34 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        ref: ${{ github.head_ref || github.ref_name }}
 
-    - name: Check formatting with Ruff (Warn only)
-      # This step checks for formatting issues but will NOT FAIL the job.
-      # It will show a warning annotation instead.
+    - name: Check and fix linting with Ruff
       uses: astral-sh/ruff-action@v3
       with:
-        args: 'format --check'
+        args: 'check --fix'
+      continue-on-error: true
+
+    - name: Format code with Ruff
+      uses: astral-sh/ruff-action@v3
+      with:
+        args: 'format'
+
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "style: apply Ruff auto-formatting"
+
+    - name: Verify linting passes
+      uses: astral-sh/ruff-action@v3
+      with:
+        args: 'check'
 
   typing:
     runs-on: ubuntu-latest
