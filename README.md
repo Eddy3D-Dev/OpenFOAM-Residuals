@@ -75,12 +75,6 @@ uv run python -m openfoam_residuals.main -w case1 -w case2
 uv run pytest
 ```
 
-### Linting and Formatting
-```bash
-uv run ruff check
-uv run ruff format
-```
-
 ## License
 
 GNU General Public License v3 (GPLv3)
