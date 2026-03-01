@@ -18,8 +18,8 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 from openfoam_residuals import filesystem as fs
 from openfoam_residuals import plot as pl
