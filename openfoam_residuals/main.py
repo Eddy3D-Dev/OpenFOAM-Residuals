@@ -124,12 +124,18 @@ def main() -> None:
     _LOG.debug("Export directory: %s", out_dir)
 
     # Export
-    pl.export_files(
-        residual_files,
-        min_val,
-        max_iter,
-        output_dir=out_dir,
-    )
+    if not args.no_plots:
+        print(f"Processing {len(residual_files)} residual file(s)...")
+        pl.export_files(
+            residual_files,
+            min_val,
+            max_iter,
+            output_dir=out_dir,
+        )
+        print(f"\n✨ Successfully exported plots to {out_dir}")
+    else:
+        _LOG.info("Skipping plot generation (--no-plots).")
+
     _LOG.info("Done - results in %s", out_dir)
 
 

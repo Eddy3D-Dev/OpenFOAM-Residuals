@@ -22,7 +22,9 @@ def export_files(
     else:
         output_dir_path = Path.cwd()
 
+    total_files = len(residual_files)
     for idx, filepath in enumerate(residual_files):
+        print(f"\r🎨 Plotting residuals: [{idx + 1}/{total_files}]", end="", flush=True)
         data, _ = fs.pre_parse(filepath)
         ax = data.plot(logy=True, figsize=(15, 5))
         ax.legend(loc="upper right")
