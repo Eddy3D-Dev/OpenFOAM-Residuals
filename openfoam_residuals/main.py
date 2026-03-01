@@ -18,11 +18,14 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
-from collections.abc import Iterable
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from openfoam_residuals import filesystem as fs
 from openfoam_residuals import plot as pl
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 _LOG = logging.getLogger(__name__)
 
