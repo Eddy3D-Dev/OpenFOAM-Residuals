@@ -1,12 +1,8 @@
 """Plotting utilities for OpenFOAM residuals analysis."""
-
 from __future__ import annotations
-
 import sys
 from pathlib import Path
-
 import matplotlib.pyplot as plt
-
 import openfoam_residuals.filesystem as fs
 
 
@@ -25,13 +21,11 @@ def export_files(
 
     total = len(residual_files)
     is_tty = sys.stdout.isatty()
-
     for idx, filepath in enumerate(residual_files):
         if is_tty:
             # \033[K clears the line from the cursor to the end
             sys.stdout.write(f"\r\033[K🎨 Plotting {idx + 1}/{total} ({filepath.name})...")
             sys.stdout.flush()
-
         data, _ = fs.pre_parse(filepath)
         ax = data.plot(logy=True, figsize=(15, 5))
         ax.legend(loc="upper right")
@@ -46,7 +40,6 @@ def export_files(
         out_path = output_dir_path / out_name
         plt.savefig(out_path, dpi=600)
         plt.close()
-
     if is_tty and total > 0:
         sys.stdout.write("\r\033[K✨ Plotting complete!\n")
         sys.stdout.flush()
