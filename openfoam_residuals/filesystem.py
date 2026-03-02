@@ -10,6 +10,14 @@ import pandas as pd
 from openfoam_residuals import utils
 
 
+class DataParseError(Exception):
+    """Raised when a residual file cannot be parsed."""
+
+    def __init__(self, file: Path, reason: str) -> None:
+        """Initialize the exception with the file and reason."""
+        super().__init__(f"File '{file}' {reason}")
+
+
 def find_residual_files(w_dir: Path) -> list[Path]:
     """Return a list of all residuals*.dat files recursively found under w_dir."""
     return list(Path(w_dir).rglob("residuals*.dat"))
@@ -40,14 +48,20 @@ def pre_parse(file: Path) -> tuple[pd.DataFrame, pd.Series]:
     # ⚡ Bolt: removed `engine="python"` to use pandas default C engine for ~3x faster parsing
     # Note: engine='python' was intentionally removed to allow pandas
     # to use its default C engine, which provides a ~5x speedup for parsing.
-    raw_data = pd.read_csv(
-        io.StringIO(cleaned_text),
-        skiprows=[0],
-        sep=r"\s+",
-        na_values="N/A",
-        on_bad_lines="error",
-    )
-    iterations = raw_data["Time"]
+    try:
+        raw_data = pd.read_csv(
+            io.StringIO(cleaned_text),
+            skiprows=[0],
+            sep=r"\s+",
+            na_values="N/A",
+            on_bad_lines="error",
+        )
+        iterations = raw_data["Time"]
+    except pd.errors.EmptyDataError as err:
+        raise DataParseError(file, "is empty or malformed.") from err
+    except KeyError as err:
+        raise DataParseError(file, "is missing the required 'Time' column.") from err
+
     data = raw_data.drop(["Time"], axis=1)
     data = data.set_index(iterations)
     data = data.dropna(
