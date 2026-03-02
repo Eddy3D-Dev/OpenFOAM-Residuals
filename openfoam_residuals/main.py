@@ -35,7 +35,9 @@ def parse_args() -> argparse.Namespace:
     """Parse command-line arguments for the residual plotting CLI."""
     parser = argparse.ArgumentParser(
         description="Locate OpenFOAM residual files, "
-        "compute min/max iterations and export plots/data."
+        "compute min/max iterations and export plots/data.",
+        epilog=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
     # mutually-exclusive group: either a single file OR one/more work dirs
@@ -108,13 +110,20 @@ def main() -> None:
     if args.file:
         residual_files = [Path(args.file).resolve()]
         if not residual_files[0].exists():
-            _LOG.error("File %s not found.", residual_files[0])
+            _LOG.error(
+                "File '%s' not found.\n"
+                "       Hint: Check that the path is correct and the file exists.",
+                residual_files[0],
+            )
             sys.exit(1)
         _LOG.info("Using single file: %s", residual_files[0])
     else:
         residual_files = gather_from_dirs(args.work_dir)
         if not residual_files:
-            _LOG.error("No residual files found in supplied directories.")
+            _LOG.error(
+                "No residual files found in supplied directories.\n"
+                "       Hint: Ensure the directories contain files matching 'residuals*.dat'."
+            )
             sys.exit(1)
 
     # Compute min/max iteration over the chosen set
