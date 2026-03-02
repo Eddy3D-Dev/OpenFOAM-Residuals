@@ -148,3 +148,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         _LOG.warning("Interrupted by user - aborting.")
         sys.exit(130)
+    except fs.DataParseError as e:
+        _LOG.error(str(e))
+        sys.exit(1)

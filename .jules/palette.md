@@ -1,0 +1,3 @@
+## 2024-05-18 - Improve CLI error messages
+**Learning:** Raw stack traces from CLI tools are intimidating to users, particularly when the root cause is something simple like a malformed or empty data file. Users should be given clear and actionable feedback rather than a full exception stack trace.
+**Action:** When working on CLI tools, identify common failures (e.g., malformed input files) and handle them with custom exceptions and user-friendly console logs.
