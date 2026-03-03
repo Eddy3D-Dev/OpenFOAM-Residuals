@@ -145,7 +145,7 @@ def main() -> None:
             max_iter,
             output_dir=out_dir,
         )
-        print(f"\n✨ Successfully exported plots to {out_dir}")
+        print(f"✨ Successfully exported {len(residual_files)} plot(s) to {out_dir}")
     else:
         _LOG.info("Skipping plot generation (--no-plots).")
 
