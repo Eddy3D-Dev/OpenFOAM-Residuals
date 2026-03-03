@@ -137,7 +137,8 @@ def main() -> None:
 
     # Export
     if not args.no_plots:
-        print(f"Processing {len(residual_files)} residual file(s)...")
+        plural = "" if len(residual_files) == 1 else "s"
+        print(f"Processing {len(residual_files)} residual file{plural}...")
         pl.export_files(
             residual_files,
             min_val,

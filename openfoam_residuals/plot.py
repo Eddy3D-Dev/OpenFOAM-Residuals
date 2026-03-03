@@ -34,8 +34,10 @@ def export_files(
     for idx, filepath in enumerate(residual_files):
         if is_tty:
             # \033[K clears the line from the cursor to the end
+            # Show up to 3 path components to give context, since file is usually just "residuals.dat"
+            display_name = "/".join(filepath.parts[-3:]) if len(filepath.parts) >= 3 else filepath.name
             sys.stdout.write(
-                f"\r\033[K🎨 Plotting {idx + 1}/{total} ({filepath.name})..."
+                f"\r\033[K🎨 Plotting {idx + 1}/{total} ({display_name})..."
             )
             sys.stdout.flush()
         data, _ = fs.pre_parse(filepath)
