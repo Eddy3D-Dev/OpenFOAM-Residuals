@@ -60,5 +60,6 @@ def export_files(
     # ⚡ Bolt: Close the figure explicitly after all plots are done
     plt.close(fig)
     if is_tty and total > 0:
-        sys.stdout.write("\r\033[K✨ Plotting complete!\n")
+        # Clear the progress line so the final success message is clean
+        sys.stdout.write("\r\033[K")
         sys.stdout.flush()
