@@ -19,7 +19,7 @@ import argparse
 import logging
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 from openfoam_residuals import filesystem as fs
 from openfoam_residuals import plot as pl
@@ -80,10 +80,36 @@ def parse_args() -> argparse.Namespace:
 
 
 # ───────────────────────────── helpers ──────────────────────────────────
+class _ColorFormatter(logging.Formatter):
+    """Custom formatter to add ANSI colors to log levels if outputting to a TTY."""
+
+    COLORS: ClassVar[dict[int, str]] = {
+        logging.DEBUG: "\033[90m",  # Gray
+        logging.INFO: "\033[36m",  # Cyan
+        logging.WARNING: "\033[33m",  # Yellow
+        logging.ERROR: "\033[31m",  # Red
+        logging.CRITICAL: "\033[31;1m",  # Bold Red
+    }
+    RESET: ClassVar[str] = "\033[0m"
+
+    def format(self, record: logging.LogRecord) -> str:
+        """Format the log record with colors if stdout is a TTY."""
+        if sys.stderr.isatty():
+            color = self.COLORS.get(record.levelno, "")
+            original_levelname = record.levelname
+            record.levelname = f"{color}{record.levelname}{self.RESET}"
+            formatted = super().format(record)
+            record.levelname = original_levelname
+            return formatted
+        return super().format(record)
+
+
 def configure_logging(verbosity: int) -> None:
     """Configure logging level based on verbosity."""
     level = logging.WARNING - min(verbosity, 2) * 10
-    logging.basicConfig(level=level, format="%(levelname)s │ %(message)s")
+    handler = logging.StreamHandler()
+    handler.setFormatter(_ColorFormatter("%(levelname)s │ %(message)s"))
+    logging.basicConfig(level=level, handlers=[handler], force=True)
 
 
 def gather_from_dirs(dirs: Iterable[str | Path]) -> list[Path]:
@@ -126,6 +152,9 @@ def main() -> None:
             )
             sys.exit(1)
 
+    plural = "" if len(residual_files) == 1 else "s"
+    print(f"Processing {len(residual_files)} residual file{plural}...")
+
     # Compute min/max iteration over the chosen set
     min_val, max_iter = fs.find_min_and_max_iteration(residual_files)
     _LOG.info("Global min residual: %g   max iteration: %d", min_val, max_iter)
@@ -137,8 +166,6 @@ def main() -> None:
 
     # Export
     if not args.no_plots:
-        plural = "" if len(residual_files) == 1 else "s"
-        print(f"Processing {len(residual_files)} residual file{plural}...")
         pl.export_files(
             residual_files,
             min_val,

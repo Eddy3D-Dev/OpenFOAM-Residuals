@@ -9,3 +9,7 @@
 ## 2026-03-04 - Pandas `.min().min()` overhead on large DataFrames
 **Learning:** Computing the global minimum of a pandas DataFrame using `df.min().min()` is surprisingly slow because it computes the minimum per column (creating a new Series) before computing the global minimum. Converting the numeric DataFrame to a numpy array first via `df.to_numpy()` and using `numpy.nanmin()` is ~20x faster. Additionally, for monotonically increasing index values (like OpenFOAM Time iterations), getting the max index using `df.index[-1]` avoids the O(N) cost of `df.index.max()`.
 **Action:** When computing a global scalar statistic (like `min` or `max`) over an entire numeric DataFrame, always convert it to a NumPy array first (`np.nanmin(df.to_numpy())`) to bypass pandas indexing and structure overhead. For sorted indices, use positional indexing (`[-1]`) instead of a full scan.
+
+## 2026-03-04 - Pandas dataframe plotting wrapper overhead
+**Learning:** Calling `df.plot(ax=ax)` repeatedly in a loop is extremely slow because the pandas plotting API does a massive amount of boilerplate validation and formatting per call. Using matplotlib's native `ax.plot(df.index, df.values)` instead yields a >50% performance improvement.
+**Action:** When batch-generating many plots, always extract the numpy arrays from pandas objects and use direct matplotlib functions (`ax.plot`, `ax.scatter`, etc.) rather than relying on pandas's higher-level wrapper.
