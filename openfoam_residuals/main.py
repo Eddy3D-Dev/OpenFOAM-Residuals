@@ -152,6 +152,9 @@ def main() -> None:
             )
             sys.exit(1)
 
+    plural = "" if len(residual_files) == 1 else "s"
+    print(f"Processing {len(residual_files)} residual file{plural}...")
+
     # Compute min/max iteration over the chosen set
     min_val, max_iter = fs.find_min_and_max_iteration(residual_files)
     _LOG.info("Global min residual: %g   max iteration: %d", min_val, max_iter)
@@ -163,8 +166,6 @@ def main() -> None:
 
     # Export
     if not args.no_plots:
-        plural = "" if len(residual_files) == 1 else "s"
-        print(f"Processing {len(residual_files)} residual file{plural}...")
         pl.export_files(
             residual_files,
             min_val,

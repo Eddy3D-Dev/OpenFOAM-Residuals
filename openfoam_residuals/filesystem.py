@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -27,7 +28,18 @@ def find_min_and_max_iteration(residual_files: list[Path]) -> tuple[int, int]:
     """Return (min_val, max_iter) across all files."""
     min_val = 1
     max_iter = 0
-    for file in residual_files:
+    total = len(residual_files)
+    is_tty = sys.stdout.isatty()
+    for idx, file in enumerate(residual_files):
+        if is_tty:
+            display_name = (
+                "/".join(file.parts[-3:]) if len(file.parts) >= 3 else file.name
+            )
+            sys.stdout.write(
+                f"\r\033[K🔍 Analyzing {idx + 1}/{total} ({display_name})..."
+            )
+            sys.stdout.flush()
+
         data, _ = pre_parse(file)
         min_i = 10 ** utils.order_of_magnitude(data.min().min())
         if 0 < min_i < min_val:
@@ -35,6 +47,11 @@ def find_min_and_max_iteration(residual_files: list[Path]) -> tuple[int, int]:
         max_iter_i = data.index.max()
         if max_iter_i > max_iter:
             max_iter = utils.roundup(max_iter_i)
+
+    if is_tty and total > 0:
+        sys.stdout.write("\r\033[K")
+        sys.stdout.flush()
+
     return min_val, max_iter
 
 
