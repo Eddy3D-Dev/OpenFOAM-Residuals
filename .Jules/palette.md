@@ -13,3 +13,7 @@
 ## 2026-03-04 - Provide Progress Context During Data Parsing
 **Learning:** Silent data-processing phases before actual feedback (like plotting) feel like hangs. Users should get immediate feedback when files are discovered and receive progress indicators during parsing.
 **Action:** Move initialization messages to right before processing starts and provide a progress indicator (`last 3 path components`) during data parsing too.
+
+## 2026-03-04 - Colored Terminal Outputs
+**Learning:** Pure CLI tools lack visual hierarchy, making it difficult for users to distinguish errors from informational messages at a glance. Adding ANSI color codes to log levels drastically improves the developer experience with zero additional dependency weight.
+**Action:** When working on CLI tools, implement native ANSI color formatting for console outputs connected to a TTY to provide immediate, accessible visual cues.
