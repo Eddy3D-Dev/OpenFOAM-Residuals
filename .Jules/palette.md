@@ -18,6 +18,6 @@
 **Learning:** Pure CLI tools lack visual hierarchy, making it difficult for users to distinguish errors from informational messages at a glance. Adding ANSI color codes to log levels drastically improves the developer experience with zero additional dependency weight.
 **Action:** When working on CLI tools, implement native ANSI color formatting for console outputs connected to a TTY to provide immediate, accessible visual cues.
 
-## 2026-03-05 - Hide Terminal Cursor During Inline Progress
-**Learning:** When using carriage returns (`\r`) to update progress on a single line, the terminal cursor jumps back and forth, creating a distracting flickering effect. Additionally, if an error or keyboard interrupt occurs mid-progress, the error message often appends to the current line, creating messy output.
-**Action:** Use ANSI sequences to hide the cursor (`\033[?25l`) at startup and restore it (`\033[?25h`) on exit (e.g., using `atexit`). Always clear the current line (`\r\033[K`) in top-level exception handlers before printing errors to ensure clean, readable output.
+## 2026-03-04 - Clean Progress Indicators and Exception Handling
+**Learning:** In terminal CLIs, inline progress indicators (`\r`) can cause visual flickering of the cursor. Furthermore, exceptions raised during progress can interleave with the progress text, creating confusing and unreadable error logs.
+**Action:** Always hide the cursor (`\033[?25l`) while progress is active, and ensure it is restored on exit (e.g., via `atexit`). When handling top-level exceptions, clear the current progress line (`\r\033[K`) before logging the error to maintain clean output.
