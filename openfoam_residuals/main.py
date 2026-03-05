@@ -16,6 +16,7 @@ python main.py -w case1 -w case2 -vv --no-plots
 from __future__ import annotations
 
 import argparse
+import atexit
 import logging
 import sys
 from pathlib import Path
@@ -80,6 +81,13 @@ def parse_args() -> argparse.Namespace:
 
 
 # ───────────────────────────── helpers ──────────────────────────────────
+def _restore_cursor() -> None:
+    """Restore the terminal cursor on exit."""
+    if sys.stdout.isatty():
+        sys.stdout.write("\033[?25h")
+        sys.stdout.flush()
+
+
 class _ColorFormatter(logging.Formatter):
     """Custom formatter to add ANSI colors to log levels if outputting to a TTY."""
 
@@ -129,6 +137,12 @@ def gather_from_dirs(dirs: Iterable[str | Path]) -> list[Path]:
 # ───────────────────────────── main routine ─────────────────────────────
 def main() -> None:
     """Parse, compute, and export residual plots."""
+    if sys.stdout.isatty():
+        # Hide cursor to prevent flickering during inline progress updates
+        sys.stdout.write("\033[?25l")
+        sys.stdout.flush()
+        atexit.register(_restore_cursor)
+
     args = parse_args()
     configure_logging(args.verbose)
 
@@ -183,8 +197,14 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
+        if sys.stdout.isatty():
+            sys.stdout.write("\r\033[K")
+            sys.stdout.flush()
         _LOG.warning("Interrupted by user - aborting.")
         sys.exit(130)
     except fs.DataParseError as e:
+        if sys.stdout.isatty():
+            sys.stdout.write("\r\033[K")
+            sys.stdout.flush()
         _LOG.error(str(e))
         sys.exit(1)
