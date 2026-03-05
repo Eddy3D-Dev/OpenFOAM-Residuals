@@ -16,6 +16,7 @@ python main.py -w case1 -w case2 -vv --no-plots
 from __future__ import annotations
 
 import argparse
+import atexit
 import logging
 import sys
 from pathlib import Path
@@ -104,6 +105,13 @@ class _ColorFormatter(logging.Formatter):
         return super().format(record)
 
 
+def _restore_cursor() -> None:
+    """Restore the terminal cursor if we hid it."""
+    if sys.stdout.isatty():
+        sys.stdout.write("\033[?25h")
+        sys.stdout.flush()
+
+
 def configure_logging(verbosity: int) -> None:
     """Configure logging level based on verbosity."""
     level = logging.WARNING - min(verbosity, 2) * 10
@@ -180,11 +188,22 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    if sys.stdout.isatty():
+        sys.stdout.write("\033[?25l")  # Hide cursor
+        sys.stdout.flush()
+        atexit.register(_restore_cursor)
+
     try:
         main()
     except KeyboardInterrupt:
+        if sys.stdout.isatty():
+            sys.stdout.write("\r\033[K")
+            sys.stdout.flush()
         _LOG.warning("Interrupted by user - aborting.")
         sys.exit(130)
     except fs.DataParseError as e:
+        if sys.stdout.isatty():
+            sys.stdout.write("\r\033[K")
+            sys.stdout.flush()
         _LOG.error(str(e))
         sys.exit(1)
