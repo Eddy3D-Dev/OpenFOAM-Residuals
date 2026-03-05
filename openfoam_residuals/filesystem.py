@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import functools
 import io
 import sys
 from pathlib import Path
@@ -62,8 +63,9 @@ def find_min_and_max_iteration(residual_files: list[Path]) -> tuple[int, int]:
     return min_val, max_iter
 
 
-def pre_parse(file: Path) -> tuple[pd.DataFrame, pd.Series]:
-    """Parse OpenFOAM residuals file and return formatted data."""
+@functools.lru_cache(maxsize=128)
+def _cached_pre_parse(file: Path, _mtime: float) -> tuple[pd.DataFrame, pd.Series]:
+    """Cache internal implementation of pre_parse."""
     # Read file and strip all '#' characters line-by-line
     with file.open(encoding="utf-8") as f:
         cleaned_text = f.read().replace("#", "")
@@ -99,3 +101,15 @@ def pre_parse(file: Path) -> tuple[pd.DataFrame, pd.Series]:
     )  # keeps only columns that have at least one non-NaN
 
     return data, iterations
+
+
+def pre_parse(file: Path) -> tuple[pd.DataFrame, pd.Series]:
+    """Parse OpenFOAM residuals file and return formatted data."""
+    # ⚡ Bolt: Cache parsed DataFrames to avoid redundant disk I/O and parsing overhead.
+    # In batch processing, this function is called twice per file (once to find
+    # min/max iteration ranges globally, and again to plot). Caching reduces total
+    # parsing time by ~50% per file. The file's modification time (mtime) is used
+    # as part of the cache key to ensure the cache is invalidated if the underlying
+    # file on disk is modified.
+    mtime = file.stat().st_mtime
+    return _cached_pre_parse(file, mtime)
