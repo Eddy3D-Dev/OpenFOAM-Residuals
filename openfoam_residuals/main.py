@@ -81,6 +81,13 @@ def parse_args() -> argparse.Namespace:
 
 
 # ───────────────────────────── helpers ──────────────────────────────────
+def _restore_cursor() -> None:
+    """Restore the terminal cursor on exit."""
+    if sys.stdout.isatty():
+        sys.stdout.write("\033[?25h")
+        sys.stdout.flush()
+
+
 class _ColorFormatter(logging.Formatter):
     """Custom formatter to add ANSI colors to log levels if outputting to a TTY."""
 
@@ -137,6 +144,12 @@ def gather_from_dirs(dirs: Iterable[str | Path]) -> list[Path]:
 # ───────────────────────────── main routine ─────────────────────────────
 def main() -> None:
     """Parse, compute, and export residual plots."""
+    if sys.stdout.isatty():
+        # Hide cursor to prevent flickering during inline progress updates
+        sys.stdout.write("\033[?25l")
+        sys.stdout.flush()
+        atexit.register(_restore_cursor)
+
     args = parse_args()
     configure_logging(args.verbose)
 
