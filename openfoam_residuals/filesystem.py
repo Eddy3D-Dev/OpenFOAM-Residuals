@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import functools
-import io
 import sys
 from pathlib import Path
 
@@ -66,9 +65,15 @@ def find_min_and_max_iteration(residual_files: list[Path]) -> tuple[int, int]:
 @functools.lru_cache(maxsize=128)
 def _cached_pre_parse(file: Path, _mtime: float) -> tuple[pd.DataFrame, pd.Series]:
     """Cache internal implementation of pre_parse."""
-    # Read file and strip all '#' characters line-by-line
+    headers = None
     with file.open(encoding="utf-8") as f:
-        cleaned_text = f.read().replace("#", "")
+        for line in f:
+            if line.startswith("# Time"):
+                # Extract headers and strip the leading '#'
+                headers = line.replace("#", "").split()
+                break
+        else:
+            raise DataParseError(file, "is missing the required 'Time' column.")
 
     # Parse cleaned data
     # ⚡ Bolt: removed `engine="python"` to use pandas default C engine for ~3x faster parsing
@@ -77,10 +82,15 @@ def _cached_pre_parse(file: Path, _mtime: float) -> tuple[pd.DataFrame, pd.Serie
     # ⚡ Bolt: Added `index_col=0` to let pandas directly assign 'Time' as the index
     # during parsing, which eliminates the ~10-15% overhead of manually extracting
     # it, dropping the column, and re-indexing the DataFrame afterwards.
+    # ⚡ Bolt: Avoid loading entire residual files into memory (via a Python string
+    # or `io.StringIO`) by parsing the `# Time` header manually from the first few
+    # lines, and then letting Pandas stream the file using its fast C engine
+    # via `names=headers` and `comment='#'`. This significantly reduces memory overhead.
     try:
         raw_data = pd.read_csv(
-            io.StringIO(cleaned_text),
-            skiprows=[0],
+            file,
+            names=headers,
+            comment="#",
             sep=r"\s+",
             na_values="N/A",
             on_bad_lines="error",
