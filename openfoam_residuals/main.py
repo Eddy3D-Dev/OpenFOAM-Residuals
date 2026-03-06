@@ -123,11 +123,22 @@ def configure_logging(verbosity: int) -> None:
 def gather_from_dirs(dirs: Iterable[str | Path]) -> list[Path]:
     """Find all residual files in the provided directories."""
     residual_files: list[Path] = []
+    is_tty = sys.stdout.isatty()
     for work_dir in map(Path, dirs):
         if not work_dir.exists():
             _LOG.error("Work dir %s does not exist -- skipping.", work_dir)
             continue
+
+        if is_tty:
+            sys.stdout.write(f"\r\033[K📁 Scanning '{work_dir}'...")
+            sys.stdout.flush()
+
         files = fs.find_residual_files(work_dir)
+
+        if is_tty:
+            sys.stdout.write("\r\033[K")
+            sys.stdout.flush()
+
         if not files:
             _LOG.warning("No residual files found in %s", work_dir)
         residual_files.extend(files)
