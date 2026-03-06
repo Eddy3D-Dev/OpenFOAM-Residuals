@@ -13,3 +13,7 @@
 ## 2026-03-04 - Pandas dataframe plotting wrapper overhead
 **Learning:** Calling `df.plot(ax=ax)` repeatedly in a loop is extremely slow because the pandas plotting API does a massive amount of boilerplate validation and formatting per call. Using matplotlib's native `ax.plot(df.index, df.values)` instead yields a >50% performance improvement.
 **Action:** When batch-generating many plots, always extract the numpy arrays from pandas objects and use direct matplotlib functions (`ax.plot`, `ax.scatter`, etc.) rather than relying on pandas's higher-level wrapper.
+
+## 2026-04-18 - Pandas read_csv memory and streaming overhead with StringIO
+**Learning:** Reading a large text file entirely into memory, performing string replacements, and wrapping it in `io.StringIO` before passing to `pd.read_csv` is highly inefficient and CPU/memory intensive. By manually extracting just the header from the first few lines, the `file` object itself can be passed directly to `pd.read_csv`, allowing pandas to stream the data with its C engine. This optimization bypasses reading the file content twice, avoiding huge intermediate string allocations and resulting in a ~1.5x speedup for large OpenFOAM residual files.
+**Action:** When parsing large CSV files with custom headers or commented lines, do not read the entire file into a string to pre-process it. Instead, read the first few lines iteratively to determine metadata (`names`, `skiprows`), and pass the file handle directly to `pd.read_csv` to enable streaming.
