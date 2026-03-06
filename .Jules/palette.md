@@ -21,3 +21,7 @@
 ## 2026-03-04 - Clean Progress Indicators and Exception Handling
 **Learning:** In terminal CLIs, inline progress indicators (`\r`) can cause visual flickering of the cursor. Furthermore, exceptions raised during progress can interleave with the progress text, creating confusing and unreadable error logs.
 **Action:** Always hide the cursor (`\033[?25l`) while progress is active, and ensure it is restored on exit (e.g., via `atexit`). When handling top-level exceptions, clear the current progress line (`\r\033[K`) before logging the error to maintain clean output.
+
+## 2026-03-05 - Enhance Logarithmic Plot Readability
+**Learning:** Logarithmic plots without gridlines are difficult to read and track data points back to the axes.
+**Action:** Add major and minor gridlines to logarithmic plots to improve visual tracking and data accessibility.
