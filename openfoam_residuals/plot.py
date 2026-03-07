@@ -58,6 +58,10 @@ def export_files(
             line.set_label(col_name)
         ax.set_yscale("log")
 
+        # 🎨 Palette: Add major and minor gridlines to improve readability of logarithmic plots
+        ax.grid(visible=True, which="major", alpha=0.6)
+        ax.grid(visible=True, which="minor", alpha=0.2)
+
         ax.legend(loc="upper right")
         ax.set_xlabel("Iterations")
         ax.set_ylabel("Residuals")
