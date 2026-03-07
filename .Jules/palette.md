@@ -25,3 +25,7 @@
 ## 2026-03-05 - Avoid Silent Directory Traversals
 **Learning:** Silent directory transversals or async filesystem blocking operations can leave users feeling that the application has frozen. Waiting for subsequent progress indications (like plotting) is not sufficient since finding the files itself could take a while in large directories.
 **Action:** Add visual loading indicators like `\r\033[K📁 Scanning '<dir>'...` whenever recursively searching or blocking on large directory operations.
+
+## 2026-03-05 - Enhance Readability of Logarithmic Plots
+**Learning:** When using logarithmic scales, reading values and distinguishing data points across orders of magnitude becomes difficult without visual aids.
+**Action:** Always enable both major and minor gridlines on logarithmic axes (e.g., `ax.grid(visible=True, which="major", alpha=0.6)`) to provide crucial spatial context and improve data readability.
