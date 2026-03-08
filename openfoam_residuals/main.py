@@ -71,6 +71,11 @@ def parse_args() -> argparse.Namespace:
         help="Export data files only (skip PNG generation).",
     )
     parser.add_argument(
+        "--colorblind",
+        action="store_true",
+        help="Use a colorblind-friendly palette for the plots.",
+    )
+    parser.add_argument(
         "-v",
         "--verbose",
         action="count",
@@ -190,6 +195,7 @@ def main() -> None:
             min_val,
             max_iter,
             output_dir=out_dir,
+            colorblind=args.colorblind,
         )
         print(f"✨ Successfully exported {len(residual_files)} plot(s) to {out_dir}")
     else:

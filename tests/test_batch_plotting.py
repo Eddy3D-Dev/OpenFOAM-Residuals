@@ -33,6 +33,7 @@ class TestBatchPlotting(unittest.TestCase):
             min_val,
             max_iter,
             output_dir=cls.TEST_DIR,
+            colorblind=True,
         )
 
     @classmethod
