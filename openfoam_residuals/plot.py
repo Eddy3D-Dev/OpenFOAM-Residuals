@@ -15,6 +15,8 @@ def export_files(
     min_val: float,
     max_iter: int,
     output_dir: Path | None = None,
+    *,
+    colorblind: bool = False,
 ) -> None:
     """Export PNG plots for all residual files."""
     if output_dir is not None:
@@ -26,8 +28,11 @@ def export_files(
     total = len(residual_files)
     is_tty = sys.stdout.isatty()
 
-    # 🎨 Palette: Use a colorblind-friendly palette for accessibility
-    plt.style.use("tableau-colorblind10")
+    # 🎨 Palette: Optionally use a colorblind-friendly palette for accessibility
+    if colorblind:
+        plt.style.use("tableau-colorblind10")
+    else:
+        plt.style.use("default")
 
     # ⚡ Bolt: Create Figure and Axes once and reuse them for all plots.
     # Reusing the same ax object avoids the ~10-15% overhead of instantiating
