@@ -29,3 +29,7 @@
 ## 2026-03-05 - Enhance Readability of Logarithmic Plots
 **Learning:** When using logarithmic scales, reading values and distinguishing data points across orders of magnitude becomes difficult without visual aids.
 **Action:** Always enable both major and minor gridlines on logarithmic axes (e.g., `ax.grid(visible=True, which="major", alpha=0.6)`) to provide crucial spatial context and improve data readability.
+
+## 2026-03-08 - Use Colorblind-Friendly Palettes for Data Visualization
+**Learning:** Default color cycles in plotting libraries often rely on combinations of red, green, and other colors that are indistinguishable for users with various forms of color vision deficiency (e.g., deuteranomaly, protanomaly). When plotting complex data like OpenFOAM residuals with multiple lines, this makes the visualization completely inaccessible to a significant portion of the population.
+**Action:** Always explicitly apply a colorblind-friendly style or palette (like `tableau-colorblind10` in matplotlib) before generating data visualizations to ensure accessibility without sacrificing aesthetics.
