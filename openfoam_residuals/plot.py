@@ -26,6 +26,9 @@ def export_files(
     total = len(residual_files)
     is_tty = sys.stdout.isatty()
 
+    # 🎨 Palette: Use a colorblind-friendly palette for accessibility
+    plt.style.use("tableau-colorblind10")
+
     # ⚡ Bolt: Create Figure and Axes once and reuse them for all plots.
     # Reusing the same ax object avoids the ~10-15% overhead of instantiating
     # new figure/axes objects and tearing them down in every loop iteration.
