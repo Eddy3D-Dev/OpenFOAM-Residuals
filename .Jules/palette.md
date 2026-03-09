@@ -33,3 +33,7 @@
 ## 2026-03-08 - Use Colorblind-Friendly Palettes for Data Visualization
 **Learning:** Default color cycles in plotting libraries often rely on combinations of red, green, and other colors that are indistinguishable for users with various forms of color vision deficiency (e.g., deuteranomaly, protanomaly). When plotting complex data like OpenFOAM residuals with multiple lines, this makes the visualization completely inaccessible to a significant portion of the population.
 **Action:** Always explicitly apply a colorblind-friendly style or palette (like `tableau-colorblind10` in matplotlib) before generating data visualizations to ensure accessibility without sacrificing aesthetics.
+
+## 2026-03-09 - Move Legends Outside Data-Dense Plots
+**Learning:** In data-dense plots (like OpenFOAM residuals), placing the legend inside the plot area (`loc="upper right"`) frequently obscures critical data points (such as high initial residuals), leading to a frustrating user experience.
+**Action:** When creating dense visualizations, always place the legend outside the primary plot area (e.g., `ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left")`) and ensure the output captures it by using `bbox_inches="tight"` during export.

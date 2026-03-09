@@ -70,7 +70,8 @@ def export_files(
         ax.grid(visible=True, which="major", alpha=0.6)
         ax.grid(visible=True, which="minor", alpha=0.2)
 
-        ax.legend(loc="upper right")
+        # 🎨 Palette: Move legend outside the plot area to prevent it from obscuring data
+        ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0.0)
         ax.set_xlabel("Iterations")
         ax.set_ylabel("Residuals")
         ax.set_ylim(min_val, 1)
@@ -85,7 +86,9 @@ def export_files(
         # This speeds up the `savefig` operation by ~25% per image with a
         # minimal increase in output file size, which is critical when batch
         # processing hundreds of high-DPI plots.
-        fig.savefig(out_path, dpi=600, pil_kwargs={"compress_level": 1})
+        fig.savefig(
+            out_path, dpi=600, bbox_inches="tight", pil_kwargs={"compress_level": 1}
+        )
 
     # ⚡ Bolt: Close the figure explicitly after all plots are done
     plt.close(fig)
