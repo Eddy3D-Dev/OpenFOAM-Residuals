@@ -17,6 +17,7 @@ def export_files(
     output_dir: Path | None = None,
     *,
     colorblind: bool = False,
+    linestyle: bool = False,
 ) -> None:
     """Export PNG plots for all residual files."""
     if output_dir is not None:
@@ -68,7 +69,8 @@ def export_files(
         line_styles = ["solid", "dashed", "dashdot", "dotted"]
         for i, (line, col_name) in enumerate(zip(lines, data.columns, strict=True)):
             line.set_label(col_name)
-            line.set_linestyle(line_styles[i % len(line_styles)])
+            if linestyle:
+                line.set_linestyle(line_styles[i % len(line_styles)])
 
         ax.set_yscale("log")
 
