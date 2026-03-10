@@ -37,3 +37,7 @@
 ## 2026-03-09 - Move Legends Outside Data-Dense Plots
 **Learning:** In data-dense plots (like OpenFOAM residuals), placing the legend inside the plot area (`loc="upper right"`) frequently obscures critical data points (such as high initial residuals), leading to a frustrating user experience.
 **Action:** When creating dense visualizations, always place the legend outside the primary plot area (e.g., `ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left")`) and ensure the output captures it by using `bbox_inches="tight"` during export.
+
+## 2026-03-10 - Use Varying Line Styles for Data Visualization
+**Learning:** Depending solely on color to differentiate between multiple lines in a plot makes the visualization inaccessible to users with color vision deficiency, and completely illegible if printed in grayscale.
+**Action:** Always combine color differences with varying line styles (e.g., solid, dashed, dotted, dashdot) when generating multi-line plots to ensure the data can be distinguished through multiple visual channels.

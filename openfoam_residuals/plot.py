@@ -17,6 +17,7 @@ def export_files(
     output_dir: Path | None = None,
     *,
     colorblind: bool = False,
+    linestyle: bool = False,
 ) -> None:
     """Export PNG plots for all residual files."""
     if output_dir is not None:
@@ -62,8 +63,15 @@ def export_files(
         # underlying pandas plotting boilerplate/overhead. This reduces the time
         # taken per plot by >50%.
         lines = ax.plot(data.index, data.values)
-        for line, col_name in zip(lines, data.columns, strict=True):
+
+        # 🎨 Palette: Vary line styles to ensure plots are readable in grayscale
+        # or by users with color vision deficiency, reducing reliance on color alone.
+        line_styles = ["solid", "dashed", "dashdot", "dotted"]
+        for i, (line, col_name) in enumerate(zip(lines, data.columns, strict=True)):
             line.set_label(col_name)
+            if linestyle:
+                line.set_linestyle(line_styles[i % len(line_styles)])
+
         ax.set_yscale("log")
 
         # 🎨 Palette: Add major and minor gridlines to improve readability of logarithmic plots

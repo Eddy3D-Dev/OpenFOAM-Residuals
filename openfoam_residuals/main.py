@@ -76,6 +76,11 @@ def parse_args() -> argparse.Namespace:
         help="Use a colorblind-friendly palette for the plots.",
     )
     parser.add_argument(
+        "--linestyle",
+        action="store_true",
+        help="Vary line styles for accessible plots.",
+    )
+    parser.add_argument(
         "-v",
         "--verbose",
         action="count",
@@ -196,6 +201,7 @@ def main() -> None:
             max_iter,
             output_dir=out_dir,
             colorblind=args.colorblind,
+            linestyle=args.linestyle,
         )
         print(f"✨ Successfully exported {len(residual_files)} plot(s) to {out_dir}")
     else:
