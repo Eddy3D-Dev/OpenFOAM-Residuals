@@ -37,7 +37,7 @@ def find_min_and_max_iteration(residual_files: list[Path]) -> tuple[int, int]:
                 "/".join(file.parts[-3:]) if len(file.parts) >= 3 else file.name
             )
             sys.stdout.write(
-                f"\r\033[K🔍 Analyzing {idx + 1}/{total} ({display_name})..."
+                f"\r\033[K🔍 Analyzing {idx + 1}/{total} [{int((idx + 1) / total * 100)}%] ({display_name})..."
             )
             sys.stdout.flush()
 

@@ -41,3 +41,7 @@
 ## 2026-03-10 - Use Varying Line Styles for Data Visualization
 **Learning:** Depending solely on color to differentiate between multiple lines in a plot makes the visualization inaccessible to users with color vision deficiency, and completely illegible if printed in grayscale.
 **Action:** Always combine color differences with varying line styles (e.g., solid, dashed, dotted, dashdot) when generating multi-line plots to ensure the data can be distinguished through multiple visual channels.
+
+## 2024-05-18 - Improve CLI Progress Feedback
+**Learning:** For batch processing of large numbers of files, displaying progress only as a fraction (e.g., "150/1000") can make it difficult for users to quickly assess overall completion at a glance. Adding a calculated percentage provides much clearer immediate visual feedback regarding how far along the process is.
+**Action:** When creating text-based progress updates in CLI tools, explicitly calculate and display the percentage `[X%]` alongside the current count to improve observability and reduce user anxiety during long-running tasks.
