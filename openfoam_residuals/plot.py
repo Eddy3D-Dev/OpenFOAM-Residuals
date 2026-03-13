@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+from matplotlib import ticker
 
 import openfoam_residuals.filesystem as fs
 
@@ -83,6 +84,9 @@ def export_files(
         ax.set_ylabel("Residuals")
         ax.set_ylim(min_val, 1)
         ax.set_xlim(0, max_iter)
+
+        # 🎨 Palette: Format x-axis with comma separators for readability of large iteration numbers
+        ax.xaxis.set_major_formatter(ticker.StrMethodFormatter("{x:,.0f}"))
 
         # 🎨 Palette: Add a descriptive title to the plot to ensure that sighted users,
         # and those viewing the plot out of context (e.g. embedded in a report)
