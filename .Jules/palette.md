@@ -45,3 +45,7 @@
 ## 2024-05-18 - Improve CLI Progress Feedback
 **Learning:** For batch processing of large numbers of files, displaying progress only as a fraction (e.g., "150/1000") can make it difficult for users to quickly assess overall completion at a glance. Adding a calculated percentage provides much clearer immediate visual feedback regarding how far along the process is.
 **Action:** When creating text-based progress updates in CLI tools, explicitly calculate and display the percentage `[X%]` alongside the current count to improve observability and reduce user anxiety during long-running tasks.
+
+## 2024-05-20 - Add Clickable Hyperlinks for Terminal Outputs
+**Learning:** Generating files with CLI tools often requires the user to manually copy the generated directory path and paste it into a file explorer or `cd` into it, creating unnecessary friction at the end of a successful run. Modern terminal emulators support clickable hyperlinks via the OSC 8 sequence.
+**Action:** When outputting the final location of generated files/folders, dynamically format the path as a clickable hyperlink (`\033]8;;file://...`) if the output is attached to a TTY, allowing users to open the output directly from their terminal with one click.

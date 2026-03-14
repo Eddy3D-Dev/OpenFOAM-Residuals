@@ -203,11 +203,24 @@ def main() -> None:
             colorblind=args.colorblind,
             linestyle=args.linestyle,
         )
-        print(f"✨ Successfully exported {len(residual_files)} plot(s) to {out_dir}")
+
+        # 🎨 Palette: Format the output directory as a clickable terminal hyperlink
+        # for modern emulators so users can open it instantly, reducing friction.
+        out_display = str(out_dir)
+        if sys.stdout.isatty():
+            out_display = f"\033]8;;{out_dir.resolve().as_uri()}\033\\{out_dir}\033]8;;\033\\"
+
+        print(
+            f"✨ Successfully exported {len(residual_files)} plot(s) to {out_display}"
+        )
     else:
         _LOG.info("Skipping plot generation (--no-plots).")
 
-    _LOG.info("Done - results in %s", out_dir)
+    # Also make the done log clickable if it's a TTY
+    final_out_display = str(out_dir)
+    if sys.stderr.isatty():
+        final_out_display = f"\033]8;;{out_dir.resolve().as_uri()}\033\\{out_dir}\033]8;;\033\\"
+    _LOG.info("Done - results in %s", final_out_display)
 
 
 if __name__ == "__main__":
