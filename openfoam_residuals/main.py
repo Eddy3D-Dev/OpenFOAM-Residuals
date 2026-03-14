@@ -208,7 +208,9 @@ def main() -> None:
         # for modern emulators so users can open it instantly, reducing friction.
         out_display = str(out_dir)
         if sys.stdout.isatty():
-            out_display = f"\033]8;;{out_dir.resolve().as_uri()}\033\\{out_dir}\033]8;;\033\\"
+            out_display = (
+                f"\033]8;;{out_dir.resolve().as_uri()}\033\\{out_dir}\033]8;;\033\\"
+            )
 
         print(
             f"✨ Successfully exported {len(residual_files)} plot(s) to {out_display}"
@@ -219,7 +221,9 @@ def main() -> None:
     # Also make the done log clickable if it's a TTY
     final_out_display = str(out_dir)
     if sys.stderr.isatty():
-        final_out_display = f"\033]8;;{out_dir.resolve().as_uri()}\033\\{out_dir}\033]8;;\033\\"
+        final_out_display = (
+            f"\033]8;;{out_dir.resolve().as_uri()}\033\\{out_dir}\033]8;;\033\\"
+        )
     _LOG.info("Done - results in %s", final_out_display)
 
 
