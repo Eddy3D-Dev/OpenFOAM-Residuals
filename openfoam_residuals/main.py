@@ -19,6 +19,7 @@ import argparse
 import atexit
 import logging
 import sys
+import time
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar
 
@@ -158,6 +159,7 @@ def gather_from_dirs(dirs: Iterable[str | Path]) -> list[Path]:
 # ───────────────────────────── main routine ─────────────────────────────
 def main() -> None:
     """Parse, compute, and export residual plots."""
+    start_time = time.perf_counter()
     args = parse_args()
     configure_logging(args.verbose)
 
@@ -188,6 +190,12 @@ def main() -> None:
     min_val, max_iter = fs.find_min_and_max_iteration(residual_files)
     _LOG.info("Global min residual: %g   max iteration: %d", min_val, max_iter)
 
+    # 🎨 Palette: Surface key convergence metrics immediately in the CLI output
+    # so users don't have to guess or check logs to see if their run is stable.
+    print(
+        f"📊 Dataset Summary: {max_iter:,} max iterations | {min_val:g} global min residual"
+    )
+
     # Prepare output folder
     out_dir = Path(args.out).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -212,8 +220,9 @@ def main() -> None:
                 f"\033]8;;{out_dir.resolve().as_uri()}\033\\{out_dir}\033]8;;\033\\"
             )
 
+        elapsed = time.perf_counter() - start_time
         print(
-            f"✨ Successfully exported {len(residual_files)} plot(s) to {out_display}"
+            f"✨ Successfully exported {len(residual_files)} plot(s) to {out_display} in {elapsed:.1f}s"
         )
     else:
         _LOG.info("Skipping plot generation (--no-plots).")
@@ -224,7 +233,8 @@ def main() -> None:
         final_out_display = (
             f"\033]8;;{out_dir.resolve().as_uri()}\033\\{out_dir}\033]8;;\033\\"
         )
-    _LOG.info("Done - results in %s", final_out_display)
+    elapsed = time.perf_counter() - start_time
+    _LOG.info("Done in %.1fs - results in %s", elapsed, final_out_display)
 
 
 if __name__ == "__main__":
