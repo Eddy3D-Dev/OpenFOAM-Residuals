@@ -49,3 +49,7 @@
 ## 2024-05-20 - Add Clickable Hyperlinks for Terminal Outputs
 **Learning:** Generating files with CLI tools often requires the user to manually copy the generated directory path and paste it into a file explorer or `cd` into it, creating unnecessary friction at the end of a successful run. Modern terminal emulators support clickable hyperlinks via the OSC 8 sequence.
 **Action:** When outputting the final location of generated files/folders, dynamically format the path as a clickable hyperlink (`\033]8;;file://...`) if the output is attached to a TTY, allowing users to open the output directly from their terminal with one click.
+
+## 2025-01-22 - Surface Key Metrics Immediately in CLI
+**Learning:** In batch processing CLIs that evaluate large datasets, users often need to open output files or inspect verbose logs simply to check if a process succeeded logically (e.g. if a simulation converged).
+**Action:** Surface key summarized metrics (like min/max values or global convergence points) immediately in the standard CLI output to provide essential context at a glance, eliminating unnecessary context-switching. Include total execution time so users can gauge overall performance.
