@@ -36,8 +36,14 @@ def find_min_and_max_iteration(residual_files: list[Path]) -> tuple[int, int]:
             display_name = (
                 "/".join(file.parts[-3:]) if len(file.parts) >= 3 else file.name
             )
+            pct = (idx + 1) / total
+            # 🎨 Palette: Add a fixed-width Unicode visual progress bar to make
+            # parsing progress instantly scannable without reading numbers.
+            bar_len = 10
+            filled = int(bar_len * pct)
+            bar = "█" * filled + "░" * (bar_len - filled)
             sys.stdout.write(
-                f"\r\033[K🔍 Analyzing {idx + 1}/{total} [{int((idx + 1) / total * 100)}%] ({display_name})..."
+                f"\r\033[K🔍 Analyzing {idx + 1}/{total} [{bar}] {int(pct * 100)}% ({display_name})..."
             )
             sys.stdout.flush()
 

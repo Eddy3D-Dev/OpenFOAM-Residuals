@@ -49,8 +49,13 @@ def export_files(
 
         if is_tty:
             # \033[K clears the line from the cursor to the end
+            pct = (idx + 1) / total
+            # 🎨 Palette: Provide consistent visual progress bar feedback for plotting.
+            bar_len = 10
+            filled = int(bar_len * pct)
+            bar = "█" * filled + "░" * (bar_len - filled)
             sys.stdout.write(
-                f"\r\033[K🎨 Plotting {idx + 1}/{total} [{int((idx + 1) / total * 100)}%] ({display_name})..."
+                f"\r\033[K🎨 Plotting {idx + 1}/{total} [{bar}] {int(pct * 100)}% ({display_name})..."
             )
             sys.stdout.flush()
         data, _ = fs.pre_parse(filepath)
