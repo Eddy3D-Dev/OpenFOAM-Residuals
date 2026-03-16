@@ -53,3 +53,7 @@
 ## 2025-01-22 - Surface Key Metrics Immediately in CLI
 **Learning:** In batch processing CLIs that evaluate large datasets, users often need to open output files or inspect verbose logs simply to check if a process succeeded logically (e.g. if a simulation converged).
 **Action:** Surface key summarized metrics (like min/max values or global convergence points) immediately in the standard CLI output to provide essential context at a glance, eliminating unnecessary context-switching. Include total execution time so users can gauge overall performance.
+
+## 2025-05-18 - Visual Progress Bars vs. Percentage Numbers
+**Learning:** In CLI interfaces processing many files (like batch plotting OpenFOAM residuals), purely displaying a percentage number forces users to cognitively read and process numbers to gauge progress. Adding a fixed-width visual progress bar (e.g., `[██████░░░░] 60%`) provides shape-based, instant visual feedback that requires significantly less cognitive load to scan.
+**Action:** When creating text-based progress indicators in CLIs, always include a visual bar component alongside the numeric percentage to improve immediate scannability.
