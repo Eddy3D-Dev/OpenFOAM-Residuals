@@ -57,3 +57,7 @@
 ## 2025-05-18 - Visual Progress Bars vs. Percentage Numbers
 **Learning:** In CLI interfaces processing many files (like batch plotting OpenFOAM residuals), purely displaying a percentage number forces users to cognitively read and process numbers to gauge progress. Adding a fixed-width visual progress bar (e.g., `[██████░░░░] 60%`) provides shape-based, instant visual feedback that requires significantly less cognitive load to scan.
 **Action:** When creating text-based progress indicators in CLIs, always include a visual bar component alongside the numeric percentage to improve immediate scannability.
+
+## 2026-03-17 - Improve Data-Ink Ratio in Dense Plots
+**Learning:** Dense data visualizations, especially logarithmic plots with gridlines, can become visually overwhelming. Unnecessary structural elements like top and right axis spines add cognitive noise without providing any additional data value.
+**Action:** Always remove the top and right spines (`ax.spines["top"].set_visible(False)`) in standard 2D plots to maximize the data-ink ratio, reduce visual clutter, and draw the user's focus directly to the plotted data lines.
