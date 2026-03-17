@@ -83,6 +83,11 @@ def export_files(
         ax.grid(visible=True, which="major", alpha=0.6)
         ax.grid(visible=True, which="minor", alpha=0.2)
 
+        # 🎨 Palette: Remove top and right spines to reduce visual clutter and
+        # improve the data-ink ratio, allowing users to focus on the data lines.
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+
         # 🎨 Palette: Move legend outside the plot area to prevent it from obscuring data
         ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left", borderaxespad=0.0)
         ax.set_xlabel("Iterations")
