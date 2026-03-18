@@ -61,3 +61,7 @@
 ## 2026-03-17 - Improve Data-Ink Ratio in Dense Plots
 **Learning:** Dense data visualizations, especially logarithmic plots with gridlines, can become visually overwhelming. Unnecessary structural elements like top and right axis spines add cognitive noise without providing any additional data value.
 **Action:** Always remove the top and right spines (`ax.spines["top"].set_visible(False)`) in standard 2D plots to maximize the data-ink ratio, reduce visual clutter, and draw the user's focus directly to the plotted data lines.
+
+## 2026-04-10 - Right-Align Dynamic Values in CLI Progress Bars
+**Learning:** When displaying inline terminal progress bars, dynamically sized numbers (like `1/100` vs `100/100`, or `1%` vs `100%`) cause the entire progress string to jitter left and right. This constant shifting creates visual noise and makes the output feel unpolished.
+**Action:** Always right-align dynamic numbers in terminal progress updates (e.g., `{idx + 1:>{len(str(total))}}` and `{pct:>3}%`) to keep the progress bar and surrounding text physically stable on the screen.
