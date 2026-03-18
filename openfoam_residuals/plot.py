@@ -54,8 +54,10 @@ def export_files(
             bar_len = 10
             filled = int(bar_len * pct)
             bar = "█" * filled + "░" * (bar_len - filled)
+            # 🎨 Palette: Right-align the iteration count and percentage to prevent
+            # the progress string from jittering left and right as numbers grow.
             sys.stdout.write(
-                f"\r\033[K🎨 Plotting {idx + 1}/{total} [{bar}] {int(pct * 100)}% ({display_name})..."
+                f"\r\033[K🎨 Plotting {idx + 1:>{len(str(total))}}/{total} [{bar}] {int(pct * 100):>3}% ({display_name})..."
             )
             sys.stdout.flush()
         data, _ = fs.pre_parse(filepath)
