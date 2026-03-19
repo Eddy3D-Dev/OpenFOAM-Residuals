@@ -48,14 +48,14 @@ def parse_args() -> argparse.Namespace:
         "-f",
         "--file",
         metavar="FILE",
-        help="Path to a single residual*.dat file to plot/export.",
+        help="Path to a single residuals*.dat or OpenFOAM log file to plot/export.",
     )
     group.add_argument(
         "-w",
         "--work-dir",
         action="append",
         metavar="DIR",
-        help="Case directory that contains residual*.dat files "
+        help="Case directory that contains residuals*.dat or OpenFOAM log files "
         "(may be given multiple times).",
     )
 
@@ -179,7 +179,8 @@ def main() -> None:
         if not residual_files:
             _LOG.error(
                 "No residual files found in supplied directories.\n"
-                "       Hint: Ensure the directories contain files matching 'residuals*.dat'."
+                "       Hint: Ensure the directories contain files matching "
+                "'residuals*.dat' or 'log.*'."
             )
             sys.exit(1)
 

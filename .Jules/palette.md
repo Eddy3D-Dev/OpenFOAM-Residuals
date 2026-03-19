@@ -1,3 +1,7 @@
+## 2024-05-18 - Improve CLI Error Messages
+**Learning:** Raw stack traces from CLI tools are intimidating to users, particularly when the root cause is something simple like a malformed or empty data file. Users should be given clear and actionable feedback rather than a full exception stack trace.
+**Action:** When working on CLI tools, identify common failures (e.g., malformed input files) and handle them with custom exceptions and user-friendly console logs.
+
 ## 2026-03-02 - Expose Examples in CLI Help
 **Learning:** Command-line tools often have great usage examples in their module docstrings, but they are hidden from users. Exposing them in `--help` provides significant onboarding value.
 **Action:** Use `argparse.RawDescriptionHelpFormatter` with `epilog=__doc__` to automatically surface module docstrings as examples in CLI help outputs.

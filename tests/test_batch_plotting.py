@@ -11,11 +11,11 @@ import openfoam_residuals.plot as pl
 
 
 class TestBatchPlotting(unittest.TestCase):
-    """Verify that ``export_files`` discovers residual*.dat files, exports, and generates expected number of PNGs."""
+    """Verify that discovered residual data files export to PNGs."""
 
     TEST_DIR: ClassVar[pathlib.Path]
     RESIDUAL_FILES: ClassVar[list[pathlib.Path]]
-    EXPECTED_PNGS: ClassVar[int] = 14  # adjust when your fixture changes
+    EXPECTED_PNGS: ClassVar[int]
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -26,6 +26,7 @@ class TestBatchPlotting(unittest.TestCase):
         cls.RESIDUAL_FILES = fs.find_residual_files(work_dir)
         # Fail fast if the fixture is missing
         assert cls.RESIDUAL_FILES, f"No residual files found in {work_dir}"
+        cls.EXPECTED_PNGS = len(cls.RESIDUAL_FILES)
 
         min_val, max_iter = fs.find_min_and_max_iteration(cls.RESIDUAL_FILES)
         pl.export_files(

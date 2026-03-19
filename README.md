@@ -6,7 +6,7 @@ A Python tool to parse and plot residual data from OpenFOAM case directories. Th
 
 ## Features
 
--   **Automatic Detection**: Recursively finds `residuals*.dat` files in case directories.
+-   **Automatic Detection**: Recursively finds `residuals*.dat` and OpenFOAM `log.*` files in case directories.
 -   **Batch Processing**: Handle multiple case directories or single files.
 -   **Plotting**: Generates high-quality PNG plots of residuals vs. iterations.
 -   **Data Export**: Exports cleaned data for further analysis.
@@ -46,7 +46,7 @@ uv add openfoam-residuals
 You can run the tool directly using `uv run`:
 
 ### Single File
-Plot residuals for a specific file:
+Plot residuals for a specific file (`residuals*.dat` or `log.*`):
 ```bash
 uv run python -m openfoam_residuals.main -f /path/to/residuals.dat
 ```

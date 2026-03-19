@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import functools
+import re
 import sys
 from pathlib import Path
 
@@ -21,8 +22,18 @@ class DataParseError(Exception):
 
 
 def find_residual_files(w_dir: Path) -> list[Path]:
-    """Return a list of all residuals*.dat files recursively found under w_dir."""
-    return list(Path(w_dir).rglob("residuals*.dat"))
+    """Return residual data files recursively found under ``w_dir``.
+
+    Supported patterns:
+    - ``residuals*.dat``
+    - OpenFOAM logs named like ``log.simpleFoam`` / ``log.icoFoam.log``
+    """
+    root = Path(w_dir)
+    candidates = [
+        *root.rglob("residuals*.dat"),
+        *root.rglob("log.*"),
+    ]
+    return sorted({path for path in candidates if path.is_file()})
 
 
 def find_min_and_max_iteration(residual_files: list[Path]) -> tuple[int, int]:
@@ -50,12 +61,14 @@ def find_min_and_max_iteration(residual_files: list[Path]) -> tuple[int, int]:
             sys.stdout.flush()
 
         data, _ = pre_parse(file)
-        # ⚡ Bolt: Use `np.nanmin(data.to_numpy())` instead of `data.min().min()`.
-        # Converting to a numpy array first avoids Pandas overhead of computing
-        # min per column and creates a ~20x faster C-level min computation.
-        min_i = 10 ** utils.order_of_magnitude(np.nanmin(data.to_numpy()))
-        if 0 < min_i < min_val:
-            min_val = min_i
+        # ⚡ Bolt: Use numpy to compute a global minimum and ignore non-positive
+        # entries (some solver logs include exact zeros, and log10(0) is invalid).
+        values = data.to_numpy()
+        positive_values = values[(values > 0) & ~np.isnan(values)]
+        if positive_values.size > 0:
+            min_i = 10 ** utils.order_of_magnitude(np.min(positive_values))
+            if 0 < min_i < min_val:
+                min_val = min_i
 
         # ⚡ Bolt: Since OpenFOAM Time (iterations) is monotonically increasing,
         # the max index is simply the last element, skipping a full scan.
@@ -73,6 +86,22 @@ def find_min_and_max_iteration(residual_files: list[Path]) -> tuple[int, int]:
 @functools.lru_cache(maxsize=128)
 def _cached_pre_parse(file: Path, _mtime: float) -> tuple[pd.DataFrame, pd.Series]:
     """Cache internal implementation of pre_parse."""
+    primary_parser = _parse_residuals_dat
+    fallback_parser = _parse_openfoam_log
+    if file.suffix.lower() != ".dat":
+        primary_parser, fallback_parser = fallback_parser, primary_parser
+
+    try:
+        return primary_parser(file)
+    except DataParseError as primary_error:
+        try:
+            return fallback_parser(file)
+        except DataParseError as fallback_error:
+            raise primary_error from fallback_error
+
+
+def _parse_residuals_dat(file: Path) -> tuple[pd.DataFrame, pd.Series]:
+    """Parse OpenFOAM ``residuals*.dat`` file format."""
     headers = None
     with file.open(encoding="utf-8") as f:
         for line in f:
@@ -118,6 +147,73 @@ def _cached_pre_parse(file: Path, _mtime: float) -> tuple[pd.DataFrame, pd.Serie
         axis=1, how="all"
     )  # keeps only columns that have at least one non-NaN
 
+    return data, iterations
+
+
+_LOG_TIME_RE = re.compile(
+    r"^\s*Time\s*=\s*(?P<time>[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)\s*$"
+)
+_LOG_SOLVE_RE = re.compile(
+    r"^\s*[^:]+:\s+Solving for (?P<field>[^,]+), Initial residual = "
+    r"(?P<residual>[^,]+),"
+)
+
+
+def _parse_openfoam_log(file: Path) -> tuple[pd.DataFrame, pd.Series]:
+    """Parse OpenFOAM solver logs into residual data per time-step."""
+    rows: list[dict[str, float]] = []
+    indices: list[int] = []
+    current_row: dict[str, float] | None = None
+    time_step = 0
+
+    with file.open(encoding="utf-8") as f:
+        for line in f:
+            if _LOG_TIME_RE.match(line):
+                if current_row:
+                    rows.append(current_row)
+                    indices.append(time_step)
+                time_step += 1
+                current_row = {}
+                continue
+
+            if current_row is None:
+                continue
+
+            solve_match = _LOG_SOLVE_RE.match(line)
+            if solve_match is None:
+                continue
+
+            field = solve_match.group("field").strip()
+            if field in current_row:
+                # Keep the first solve residual for each field per time-step.
+                continue
+
+            residual_raw = solve_match.group("residual").strip()
+            try:
+                current_row[field] = float(residual_raw)
+            except ValueError:
+                continue
+
+    if current_row:
+        rows.append(current_row)
+        indices.append(time_step)
+
+    if not rows:
+        raise DataParseError(
+            file,
+            "is empty or malformed (expected residuals*.dat or OpenFOAM log format).",
+        )
+
+    raw_data = pd.DataFrame(rows, index=indices)
+    raw_data.index.name = "Time"
+    data = raw_data.dropna(axis=1, how="all")
+    if data.empty:
+        raise DataParseError(
+            file,
+            "is empty or malformed (no parseable residual values found in log).",
+        )
+
+    iterations = pd.Series(data.index)
     return data, iterations
 
 
