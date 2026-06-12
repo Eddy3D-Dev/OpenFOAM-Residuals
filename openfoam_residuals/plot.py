@@ -21,6 +21,12 @@ def export_files(
     linestyle: bool = False,
 ) -> None:
     """Export PNG plots for all residual files."""
+    # ⚡ Bolt: Enable matplotlib path simplification to drastically speed up
+    # the generation of plots with dense data points (like residuals). This avoids
+    # rendering overlapping line segments that map to the same pixels.
+    plt.rcParams["path.simplify"] = True
+    plt.rcParams["path.simplify_threshold"] = 1.0
+
     if output_dir is not None:
         output_dir_path = output_dir
         output_dir_path.mkdir(parents=True, exist_ok=True)
