@@ -69,3 +69,7 @@
 ## 2026-04-10 - Right-Align Dynamic Values in CLI Progress Bars
 **Learning:** When displaying inline terminal progress bars, dynamically sized numbers (like `1/100` vs `100/100`, or `1%` vs `100%`) cause the entire progress string to jitter left and right. This constant shifting creates visual noise and makes the output feel unpolished.
 **Action:** Always right-align dynamic numbers in terminal progress updates (e.g., `{idx + 1:>{len(str(total))}}` and `{pct:>3}%`) to keep the progress bar and surrounding text physically stable on the screen.
+
+## 2026-04-12 - Surface Final Values in Plot Legends
+**Learning:** In line plots with logarithmic scales and multiple overlapping traces (like convergence residuals), forcing users to visually trace the end of a line back to the Y-axis to estimate the final value is tedious and error-prone.
+**Action:** When plotting convergence or time-series data where the final value is a critical metric, append the exact final value directly to the legend label (e.g. `Ux (1.2e-04)`) to provide precise, immediate context.
