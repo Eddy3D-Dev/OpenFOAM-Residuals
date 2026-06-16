@@ -81,7 +81,18 @@ def export_files(
         # or by users with color vision deficiency, reducing reliance on color alone.
         line_styles = ["solid", "dashed", "dashdot", "dotted"]
         for i, (line, col_name) in enumerate(zip(lines, data.columns, strict=True)):
-            line.set_label(col_name)
+            # 🎨 Palette: Append the final residual value to the legend label so users
+            # can instantly read convergence endpoints without tracing lines back to the axis.
+            last_valid_idx = data[col_name].last_valid_index()
+            if last_valid_idx is not None:
+                final_val = data[col_name].loc[last_valid_idx]
+                # Handle case where column names are duplicated (returns a Series)
+                if hasattr(final_val, "iloc"):
+                    final_val = final_val.dropna().iloc[-1]
+                line.set_label(f"{col_name} ({float(final_val):.1e})")
+            else:
+                line.set_label(col_name)
+
             if linestyle:
                 line.set_linestyle(line_styles[i % len(line_styles)])
 
