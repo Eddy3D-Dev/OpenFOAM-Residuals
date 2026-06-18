@@ -168,7 +168,10 @@ def _parse_openfoam_log(file: Path) -> tuple[pd.DataFrame, pd.Series]:
 
     with file.open(encoding="utf-8") as f:
         for line in f:
-            if _LOG_TIME_RE.match(line):
+            # ⚡ Bolt: Fast substring checks before expensive regex matches.
+            # `in` is implemented in C and highly optimized, bypassing the
+            # regex engine entirely for the vast majority of log lines.
+            if "Time =" in line and _LOG_TIME_RE.match(line):
                 if current_row:
                     rows.append(current_row)
                     indices.append(time_step)
@@ -177,6 +180,9 @@ def _parse_openfoam_log(file: Path) -> tuple[pd.DataFrame, pd.Series]:
                 continue
 
             if current_row is None:
+                continue
+
+            if "Solving for" not in line:
                 continue
 
             solve_match = _LOG_SOLVE_RE.match(line)
