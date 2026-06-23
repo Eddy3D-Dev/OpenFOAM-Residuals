@@ -73,3 +73,6 @@
 ## 2026-04-12 - Surface Final Values in Plot Legends
 **Learning:** In line plots with logarithmic scales and multiple overlapping traces (like convergence residuals), forcing users to visually trace the end of a line back to the Y-axis to estimate the final value is tedious and error-prone.
 **Action:** When plotting convergence or time-series data where the final value is a critical metric, append the exact final value directly to the legend label (e.g. `Ux (1.2e-04)`) to provide precise, immediate context.
+## 2024-06-23 - Prevent Progress Bar Terminal Wrapping
+**Learning:** Terminal line wrapping breaks the `\r` (carriage return) cursor reset, causing progress bars with long strings (like deep file paths) to spam multiple lines instead of updating in place.
+**Action:** Always truncate variable-length string outputs (like file paths) in dynamic `\r` terminal lines using `shutil.get_terminal_size().columns` to ensure they fit within the current window width.

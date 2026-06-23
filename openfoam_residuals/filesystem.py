@@ -55,9 +55,10 @@ def find_min_and_max_iteration(residual_files: list[Path]) -> tuple[int, int]:
             bar = "█" * filled + "░" * (bar_len - filled)
             # 🎨 Palette: Right-align the iteration count and percentage to prevent
             # the progress string from jittering left and right as numbers grow.
-            sys.stdout.write(
-                f"\r\033[K🔍 Analyzing {idx + 1:>{len(str(total))}}/{total} [{bar}] {int(pct * 100):>3}% ({display_name})..."
-            )
+            # 🎨 Palette: Truncate paths that would cause the terminal line to wrap and break \r
+            base_msg = f"🔍 Analyzing {idx + 1:>{len(str(total))}}/{total} [{bar}] {int(pct * 100):>3}%"
+            safe_name = utils.truncate_path(display_name, len(base_msg))
+            sys.stdout.write(f"\r\033[K{base_msg} ({safe_name})...")
             sys.stdout.flush()
 
         data, _ = pre_parse(file)
