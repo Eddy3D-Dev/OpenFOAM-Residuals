@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib import ticker
 
 import openfoam_residuals.filesystem as fs
+from openfoam_residuals import utils
 
 
 def export_files(
@@ -62,9 +63,10 @@ def export_files(
             bar = "█" * filled + "░" * (bar_len - filled)
             # 🎨 Palette: Right-align the iteration count and percentage to prevent
             # the progress string from jittering left and right as numbers grow.
-            sys.stdout.write(
-                f"\r\033[K🎨 Plotting {idx + 1:>{len(str(total))}}/{total} [{bar}] {int(pct * 100):>3}% ({display_name})..."
-            )
+            # 🎨 Palette: Truncate paths that would cause the terminal line to wrap and break \r
+            base_msg = f"🎨 Plotting {idx + 1:>{len(str(total))}}/{total} [{bar}] {int(pct * 100):>3}%"
+            safe_name = utils.truncate_path(display_name, len(base_msg))
+            sys.stdout.write(f"\r\033[K{base_msg} ({safe_name})...")
             sys.stdout.flush()
         data, _ = fs.pre_parse(filepath)
 

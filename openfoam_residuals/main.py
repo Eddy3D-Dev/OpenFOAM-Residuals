@@ -223,7 +223,7 @@ def main() -> None:
 
         elapsed = time.perf_counter() - start_time
         print(
-            f"✨ Successfully exported {len(residual_files)} plot(s) to {out_display} in {elapsed:.1f}s"
+            f"✨ Successfully exported {len(residual_files)} plot{plural} to {out_display} in {elapsed:.1f}s"
         )
     else:
         _LOG.info("Skipping plot generation (--no-plots).")
