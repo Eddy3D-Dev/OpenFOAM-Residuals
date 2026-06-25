@@ -65,7 +65,7 @@ def find_min_and_max_iteration(residual_files: list[Path]) -> tuple[int, int]:
         # ⚡ Bolt: Use numpy to compute a global minimum and ignore non-positive
         # entries (some solver logs include exact zeros, and log10(0) is invalid).
         values = data.to_numpy()
-        positive_values = values[(values > 0) & ~np.isnan(values)]
+        positive_values = values[values > 0]
         if positive_values.size > 0:
             min_i = 10 ** utils.order_of_magnitude(np.min(positive_values))
             if 0 < min_i < min_val:
