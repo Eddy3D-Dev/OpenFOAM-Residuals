@@ -76,3 +76,7 @@
 ## 2024-06-23 - Prevent Progress Bar Terminal Wrapping
 **Learning:** Terminal line wrapping breaks the `\r` (carriage return) cursor reset, causing progress bars with long strings (like deep file paths) to spam multiple lines instead of updating in place.
 **Action:** Always truncate variable-length string outputs (like file paths) in dynamic `\r` terminal lines using `shutil.get_terminal_size().columns` to ensure they fit within the current window width.
+
+## 2026-04-15 - Improve CLI Empty State
+**Learning:** When a user runs a CLI tool without any arguments, a terse argparse required arguments error hides the helpful docstring examples and flags. This results in a poor onboarding experience for new users who are just trying to figure out how to use the tool.
+**Action:** Always intercept empty invocations (`len(sys.argv) == 1`) and automatically print the full help message (`parser.print_help()`) to act as a helpful "empty state" that provides immediate guidance.

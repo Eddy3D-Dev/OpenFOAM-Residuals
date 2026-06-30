@@ -88,6 +88,11 @@ def parse_args() -> argparse.Namespace:
         default=0,
         help="Increase logging verbosity (-v, -vv).",
     )
+
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+
     return parser.parse_args()
 
 
