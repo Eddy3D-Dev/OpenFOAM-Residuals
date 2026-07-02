@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import functools
-import os
 import re
 import sys
 from pathlib import Path
@@ -29,18 +28,12 @@ def find_residual_files(w_dir: Path) -> list[Path]:
     - ``residuals*.dat``
     - OpenFOAM logs named like ``log.simpleFoam`` / ``log.icoFoam.log``
     """
-    # ⚡ Bolt: Replace multiple `Path.rglob` calls with a single `os.walk` pass
-    # to avoid traversing the file system twice. Combining it with fast string
-    # methods yields a ~2x performance speedup on directories with many files.
-    candidates: list[Path] = []
-    for root_dir, _, files in os.walk(w_dir):
-        candidates.extend(
-            Path(root_dir) / name
-            for name in files
-            if (name.startswith("residuals") and name.endswith(".dat"))
-            or name.startswith("log.")
-        )
-    return sorted(candidates)
+    root = Path(w_dir)
+    candidates = [
+        *root.rglob("residuals*.dat"),
+        *root.rglob("log.*"),
+    ]
+    return sorted({path for path in candidates if path.is_file()})
 
 
 def find_min_and_max_iteration(residual_files: list[Path]) -> tuple[int, int]:
